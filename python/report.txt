@@ -1,0 +1,130 @@
+From Python to Java
+===================
+
+DataInputStream.readFully(byte[])
+
+Average NS for size 4: 11926.4
+Average NS for size 1024: 8231.7
+Average NS for size 524288: 252990.9
+Average NS for size 67108864: 1.71117163E7 (~17 ms)
+Average NS for size 1073741824: 2.842376611E8 (~284 ms)
+
+
+DataInputStream backed by BufferedInputStream (very similar, slightly slower)
+
+Average NS for size 4: 13666.9
+Average NS for size 1024: 16034.1
+Average NS for size 524288: 278657.4
+Average NS for size 67108864: 1.8182844E7
+Average NS for size 1073741824: 2.951132491E8
+
+
+ReadableChannel with ByteBuffer
+
+Average NS for size 4: 34299.9
+Average NS for size 1024: 17301.4
+Average NS for size 524288: 503817.0
+Average NS for size 67108864: 3.91773466E7
+Average NS for size 1073741824: 5.391595457E8
+
+
+ReadableChannel with Direct ByteBuffer
+
+Average NS for size 4: 42182.1
+Average NS for size 1024: 16362.3
+Average NS for size 524288: 641226.1
+Average NS for size 67108864: 3.30618447E7
+Average NS for size 1073741824: 5.139556846E8
+
+
+
+
+From Python to Java with read confirmation and size
+===================================================
+
+DataInputStream.readFully(byte[])
+
+Java:
+MS: 503.85348. Average NS for size 4: 5.036360898E8
+MS: 502.639709. Average NS for size 1024: 5.028078551E8
+MS: 505.197248. Average NS for size 524288: 5.030190227E8
+MS: 529.6670799999999. Average NS for size 67108864: 5.403413815E8
+MS: 1328.673936. Average NS for size 1073741824: 1.3840051253E9
+
+Python:
+
+Took 0.24008750915527344 to send 4 bytes. Average: 278210.6399536133
+Took 0.22983551025390625 to send 1024 bytes. Average: 197196.00677490234
+Took 0.5919933319091797 to send 524288 bytes. Average: 557088.8519287109
+Took 25.75206756591797 to send 67108864 bytes. Average: 37282609.939575195
+Took 826.0400295257568 to send 1073741824 bytes. Average: 881543779.373169
+
+
+
+
+DataInputStream.readFully(byte[]) with base64
+
+Java:
+MS: 504.70532799999995. Average NS for size 8: 5.03914073E8
+MS: 503.35486. Average NS for size 1368: 5.034593246E8
+MS: 510.889888. Average NS for size 699052: 5.100542502E8
+MS: 1107.196073. Average NS for size 89478488: 1.1260694883E9
+MS: 10715.168064. Average NS for size 1431655768: 1.2078879986E10
+
+Python:
+Took 0.41413307189941406 to send 8 bytes. Average: 351214.4088745117
+Took 0.25391578674316406 to send 1368 bytes. Average: 318002.70080566406
+Took 6.398200988769531 to send 699052 bytes. Average: 6846189.498901367
+Took 601.794958114624 to send 89478488 bytes. Average: 623469495.7733154
+Took 10210.202932357788 to send 1431655768 bytes. Average: 11575362992.286682
+
+
+Channel
+
+Java:
+MS: 505. Average NS for size 4: 5.034152467E8
+MS: 503. Average NS for size 1024: 5.032531155E8
+MS: 503. Average NS for size 524288: 5.028397922E8
+MS: 548. Average NS for size 67108864: 5.647729314E8
+MS: 1501. Average NS for size 1073741824: 1.5366931534E9
+
+Python:
+Took 0.30684471130371094 to send 4 bytes. Average: 426173.21014404297
+Took 0.3421306610107422 to send 1024 bytes. Average: 330018.9971923828
+Took 0.7181167602539062 to send 524288 bytes. Average: 1063013.0767822266
+Took 46.37312889099121 to send 67108864 bytes. Average: 62359547.61505127
+Took 1000.9181499481201 to send 1073741824 bytes. Average: 1033978414.5355225
+
+
+Channel (direct)
+
+Java:
+MS: 505. Average NS for size 4: 5.03374703E8
+MS: 504. Average NS for size 1024: 5.03697839E8
+MS: 502. Average NS for size 524288: 5.036464047E8
+MS: 577. Average NS for size 67108864: 5.943922089E8
+MS: 2086. Average NS for size 1073741824: 2.5312383497E9
+
+Python:
+Took 0.5979537963867188 to send 4 bytes. Average: 555610.6567382812
+Took 0.4448890686035156 to send 1024 bytes. Average: 360274.3148803711
+Took 0.7522106170654297 to send 524288 bytes. Average: 1233792.3049926758
+Took 73.57001304626465 to send 67108864 bytes. Average: 91548085.21270752
+Took 1584.831953048706 to send 1073741824 bytes. Average: 2028270173.072815
+
+
+Channel with base 64
+
+Java:
+MS: 505. Average NS for size 8: 5.040298015E8
+MS: 505. Average NS for size 1368: 5.03746943E8
+MS: 510. Average NS for size 699052: 5.092426217E8
+MS: 1152. Average NS for size 89478488: 1.142334973E9
+MS: 13793. Average NS for size 1431655768: 1.23330492335E10
+
+Python:
+Took 0.3387928009033203 to send 8 bytes. Average: 436687.4694824219
+Took 0.20003318786621094 to send 1368 bytes. Average: 365161.8957519531
+Took 6.457090377807617 to send 699052 bytes. Average: 6765532.493591309
+Took 649.6608257293701 to send 89478488 bytes. Average: 640471243.8583374
+Took 13290.663957595825 to send 1431655768 bytes. Average: 11829366302.490234
