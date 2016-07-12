@@ -1,6 +1,13 @@
+Overview
+========
+
+Python version used in benchmarks unless specified: Python 3.5
+OS used in benchmarks unless specified: Mac OSX 10.11.5
+
 MicroBenchmarks
 ===============
 
+# Int encoding: utf-8 vs ascii encoding
 python3 -m timeit -s 'a = 11111111' 'str(a).encode("utf-8")'
 1000000 loops, best of 3: 0.403 usec per loop
 python3 -m timeit -s 'a = 11111111' 'str(a).encode("ascii")'
@@ -12,6 +19,7 @@ python2 -m timeit -s 'a = 11111111' 'unicode(a).encode("ascii")'
 python2 -m timeit -s 'a = 11111111' 'unicode(a).encode("utf-8")'
 1000000 loops, best of 3: 0.604 usec per loop
 
+# Int encoding: big endian vs network endian (supposed to be the same)
 python2 -m timeit -s 'import struct; a = 11111111' 'struct.pack(">i", a)'
 10000000 loops, best of 3: 0.184 usec per loop
 python2 -m timeit -s 'import struct; a = 11111111' 'struct.pack("!i", a)'
@@ -21,10 +29,23 @@ python3 -m timeit -s 'import struct; a = 11111111' 'struct.pack("!i", a)'
 python3 -m timeit -s 'import struct; a = 11111111' 'struct.pack(">i", a)'
 10000000 loops, best of 3: 0.175 usec per loop
 
+# Double encoding
 python3 -m timeit -s 'import struct; a = 1.0/3.0' 'struct.pack("!d", a)'
 10000000 loops, best of 3: 0.171 usec per loop
 python3 -m timeit -s 'import struct; a = 1.0/3.0' 'str(a).encode("ascii")'
 1000000 loops, best of 3: 1.18 usec per loop
+
+# Should you call .clear() or just initialize a new bytearray?
+python3 -m timeit -s 'b = bytearray(b"123")' 'b.extend(b"123456789012"); b = bytearray(); b.extend(b"123456789012")'
+1000000 loops, best of 3: 0.345 usec per loop
+python3 -m timeit -s 'b = bytearray(b"123")' 'b.extend(b"123456789012"); b.clear(); b.extend(b"123456789012")'
+1000000 loops, best of 3: 0.32 usec per loop
+
+# ID Generation
+python3 -m timeit -s 'from threading import RLock; import struct; next_id = 0; lock = RLock()' 'lock.acquire(); new_id = next_id; next_id +=1; lock.release(); new_id = struct.pack("!i", new_id);'
+1000000 loops, best of 3: 0.426 usec per loop
+python3 -m timeit -s 'import uuid' 'new_id = uuid.uuid4().bytes'
+100000 loops, best of 3: 5.37 usec per loop
 
 
 From Python to Java with read confirmation and size
