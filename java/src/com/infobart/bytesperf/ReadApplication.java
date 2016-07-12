@@ -13,7 +13,7 @@ import java.util.DoubleSummaryStatistics;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Application {
+public class ReadApplication {
 
 	public static Map<Integer, DoubleSummaryStatistics> stats = new HashMap<Integer, DoubleSummaryStatistics>();
 
@@ -46,8 +46,8 @@ public class Application {
 			currentStats = new DoubleSummaryStatistics();
 			stats.put(size, currentStats);
 		}
-		currentStats.accept(timeNs);
-		System.out.println("MS: " + timeMs + ". Average NS for size " + size + ": " + currentStats.getAverage());
+		currentStats.accept(timeMs);
+		System.out.println("MS: " + timeMs + ". Average MS for size " + size + ": " + currentStats.getAverage());
 	}
 
 	public static void readChannel(Socket socket, boolean direct, boolean base64) throws Exception {
@@ -61,7 +61,6 @@ public class Application {
 //		int reads = 0;
 
 		long startNano = System.nanoTime();
-		long start = System.currentTimeMillis();
 		int size = input.readInt();
 		if (direct) {
 			buffer = ByteBuffer.allocateDirect(size);
@@ -85,10 +84,9 @@ public class Application {
 		}
 		output.writeByte(0);
 		output.flush();
-		long stop = System.currentTimeMillis();
 		long stopNano = System.nanoTime();
-		long timeMs = stop - start;
 		long timeNs = stopNano - startNano;
+		double timeMs = (double)timeNs / 1000.0 / 1000.0;
 //		buffer.flip();
 //		System.out.println((int)buffer.get(0));
 //		System.out.println((int)buffer.get(size-1));
@@ -98,8 +96,8 @@ public class Application {
 			currentStats = new DoubleSummaryStatistics();
 			stats.put(size, currentStats);
 		}
-		currentStats.accept(timeNs);
-		System.out.println("MS: " + timeMs + ". Average NS for size " + size + ": " + currentStats.getAverage());
+		currentStats.accept(timeMs);
+		System.out.println("MS: " + timeMs + ". Average MS for size " + size + ": " + currentStats.getAverage());
 //		System.out.println("Reads: " + reads);
 
 	}

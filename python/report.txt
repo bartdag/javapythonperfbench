@@ -1,130 +1,459 @@
-From Python to Java
-===================
+MicroBenchmarks
+===============
 
-DataInputStream.readFully(byte[])
+python3 -m timeit -s 'a = 11111111' 'str(a).encode("utf-8")'
+1000000 loops, best of 3: 0.403 usec per loop
+python3 -m timeit -s 'a = 11111111' 'str(a).encode("ascii")'
+1000000 loops, best of 3: 0.388 usec per loop
+python2 -m timeit -s 'a = 11111111' 'str(a)'
+10000000 loops, best of 3: 0.147 usec per loop
+python2 -m timeit -s 'a = 11111111' 'unicode(a).encode("ascii")'
+1000000 loops, best of 3: 0.594 usec per loop
+python2 -m timeit -s 'a = 11111111' 'unicode(a).encode("utf-8")'
+1000000 loops, best of 3: 0.604 usec per loop
 
-Average NS for size 4: 11926.4
-Average NS for size 1024: 8231.7
-Average NS for size 524288: 252990.9
-Average NS for size 67108864: 1.71117163E7 (~17 ms)
-Average NS for size 1073741824: 2.842376611E8 (~284 ms)
+python2 -m timeit -s 'import struct; a = 11111111' 'struct.pack(">i", a)'
+10000000 loops, best of 3: 0.184 usec per loop
+python2 -m timeit -s 'import struct; a = 11111111' 'struct.pack("!i", a)'
+10000000 loops, best of 3: 0.184 usec per loop
+python3 -m timeit -s 'import struct; a = 11111111' 'struct.pack("!i", a)'
+10000000 loops, best of 3: 0.17 usec per loop
+python3 -m timeit -s 'import struct; a = 11111111' 'struct.pack(">i", a)'
+10000000 loops, best of 3: 0.175 usec per loop
 
-
-DataInputStream backed by BufferedInputStream (very similar, slightly slower)
-
-Average NS for size 4: 13666.9
-Average NS for size 1024: 16034.1
-Average NS for size 524288: 278657.4
-Average NS for size 67108864: 1.8182844E7
-Average NS for size 1073741824: 2.951132491E8
-
-
-ReadableChannel with ByteBuffer
-
-Average NS for size 4: 34299.9
-Average NS for size 1024: 17301.4
-Average NS for size 524288: 503817.0
-Average NS for size 67108864: 3.91773466E7
-Average NS for size 1073741824: 5.391595457E8
-
-
-ReadableChannel with Direct ByteBuffer
-
-Average NS for size 4: 42182.1
-Average NS for size 1024: 16362.3
-Average NS for size 524288: 641226.1
-Average NS for size 67108864: 3.30618447E7
-Average NS for size 1073741824: 5.139556846E8
-
-
+python3 -m timeit -s 'import struct; a = 1.0/3.0' 'struct.pack("!d", a)'
+10000000 loops, best of 3: 0.171 usec per loop
+python3 -m timeit -s 'import struct; a = 1.0/3.0' 'str(a).encode("ascii")'
+1000000 loops, best of 3: 1.18 usec per loop
 
 
 From Python to Java with read confirmation and size
 ===================================================
 
 DataInputStream.readFully(byte[])
+---------------------------------
 
 Java:
-MS: 503.85348. Average NS for size 4: 5.036360898E8
-MS: 502.639709. Average NS for size 1024: 5.028078551E8
-MS: 505.197248. Average NS for size 524288: 5.030190227E8
-MS: 529.6670799999999. Average NS for size 67108864: 5.403413815E8
-MS: 1328.673936. Average NS for size 1073741824: 1.3840051253E9
+MS: 0.04467. Average MS for size 4: 0.03928252
+MS: 0.047924. Average MS for size 1024: 0.04431148
+MS: 0.36441199999999996. Average MS for size 524288: 0.37938192
+MS: 24.68377. Average MS for size 67108864: 30.51022118
+MS: 446.749123. Average MS for size 1073741824: 577.53891122
 
 Python:
-
-Took 0.24008750915527344 to send 4 bytes. Average: 278210.6399536133
-Took 0.22983551025390625 to send 1024 bytes. Average: 197196.00677490234
-Took 0.5919933319091797 to send 524288 bytes. Average: 557088.8519287109
-Took 25.75206756591797 to send 67108864 bytes. Average: 37282609.939575195
-Took 826.0400295257568 to send 1073741824 bytes. Average: 881543779.373169
+Took 0.4150867462158203 to send 4 bytes. Average: 0.4000377655029297
+Took 0.5059242248535156 to send 1024 bytes. Average: 0.7261800765991211
+Took 0.7958412170410156 to send 524288 bytes. Average: 0.7845306396484375
+Took 24.919986724853516 to send 67108864 bytes. Average: 30.811667442321777
+Took 447.0329284667969 to send 1073741824 bytes. Average: 577.800989151001
 
 
 
 
 DataInputStream.readFully(byte[]) with base64
+---------------------------------------------
 
 Java:
-MS: 504.70532799999995. Average NS for size 8: 5.03914073E8
-MS: 503.35486. Average NS for size 1368: 5.034593246E8
-MS: 510.889888. Average NS for size 699052: 5.100542502E8
-MS: 1107.196073. Average NS for size 89478488: 1.1260694883E9
-MS: 10715.168064. Average NS for size 1431655768: 1.2078879986E10
+MS: 0.029299. Average MS for size 8: 0.04470606
+MS: 0.067157. Average MS for size 1368: 0.1065218
+MS: 5.404038. Average MS for size 699052: 5.353872760000001
+MS: 617.500146. Average MS for size 89478488: 609.5920096
+MS: 10115.046334. Average MS for size 1431655768: 10734.34645746
 
 Python:
-Took 0.41413307189941406 to send 8 bytes. Average: 351214.4088745117
-Took 0.25391578674316406 to send 1368 bytes. Average: 318002.70080566406
-Took 6.398200988769531 to send 699052 bytes. Average: 6846189.498901367
-Took 601.794958114624 to send 89478488 bytes. Average: 623469495.7733154
-Took 10210.202932357788 to send 1431655768 bytes. Average: 11575362992.286682
+Took 0.3209114074707031 to send 8 bytes. Average: 0.4367637634277344
+Took 0.9000301361083984 to send 1368 bytes. Average: 0.5192422866821289
+Took 5.874872207641602 to send 699052 bytes. Average: 5.748391151428223
+Took 617.7520751953125 to send 89478488 bytes. Average: 609.8215818405151
+Took 10114.763021469116 to send 1431655768 bytes. Average: 10734.158296585083
+
 
 
 Channel
+-------
 
 Java:
-MS: 505. Average NS for size 4: 5.034152467E8
-MS: 503. Average NS for size 1024: 5.032531155E8
-MS: 503. Average NS for size 524288: 5.028397922E8
-MS: 548. Average NS for size 67108864: 5.647729314E8
-MS: 1501. Average NS for size 1073741824: 1.5366931534E9
+MS: 0.030277000000000002. Average MS for size 4: 0.05424488
+MS: 0.039922. Average MS for size 1024: 0.0931303
+MS: 0.491575. Average MS for size 524288: 0.53209084
+MS: 41.708465. Average MS for size 67108864: 60.9487533
+MS: 627.523061. Average MS for size 1073741824: 806.7813924200001
 
 Python:
-Took 0.30684471130371094 to send 4 bytes. Average: 426173.21014404297
-Took 0.3421306610107422 to send 1024 bytes. Average: 330018.9971923828
-Took 0.7181167602539062 to send 524288 bytes. Average: 1063013.0767822266
-Took 46.37312889099121 to send 67108864 bytes. Average: 62359547.61505127
-Took 1000.9181499481201 to send 1073741824 bytes. Average: 1033978414.5355225
+Took 0.3631114959716797 to send 4 bytes. Average: 1.286787986755371
+Took 0.48089027404785156 to send 1024 bytes. Average: 3.657827377319336
+Took 0.9329319000244141 to send 524288 bytes. Average: 0.9633874893188477
+Took 41.970014572143555 to send 67108864 bytes. Average: 61.282010078430176
+Took 627.7990341186523 to send 1073741824 bytes. Average: 807.0364999771118
 
 
 Channel (direct)
+----------------
 
 Java:
-MS: 505. Average NS for size 4: 5.03374703E8
-MS: 504. Average NS for size 1024: 5.03697839E8
-MS: 502. Average NS for size 524288: 5.036464047E8
-MS: 577. Average NS for size 67108864: 5.943922089E8
-MS: 2086. Average NS for size 1073741824: 2.5312383497E9
+MS: 0.051840000000000004. Average MS for size 4: 0.06601956
+MS: 0.07460800000000001. Average MS for size 1024: 0.13861278
+MS: 0.618053. Average MS for size 524288: 0.768464
+MS: 67.700347. Average MS for size 67108864: 78.2359362
+MS: 1281.1961119999999. Average MS for size 1073741824: 1658.48677204
 
 Python:
-Took 0.5979537963867188 to send 4 bytes. Average: 555610.6567382812
-Took 0.4448890686035156 to send 1024 bytes. Average: 360274.3148803711
-Took 0.7522106170654297 to send 524288 bytes. Average: 1233792.3049926758
-Took 73.57001304626465 to send 67108864 bytes. Average: 91548085.21270752
-Took 1584.831953048706 to send 1073741824 bytes. Average: 2028270173.072815
+Took 0.3819465637207031 to send 4 bytes. Average: 0.45472145080566406
+Took 0.5421638488769531 to send 1024 bytes. Average: 0.7374143600463867
+Took 1.0409355163574219 to send 524288 bytes. Average: 1.2303638458251953
+Took 68.04609298706055 to send 67108864 bytes. Average: 78.58956336975098
+Took 1281.5310955047607 to send 1073741824 bytes. Average: 1658.777232170105
 
 
 Channel with base 64
+--------------------
 
 Java:
-MS: 505. Average NS for size 8: 5.040298015E8
-MS: 505. Average NS for size 1368: 5.03746943E8
-MS: 510. Average NS for size 699052: 5.092426217E8
-MS: 1152. Average NS for size 89478488: 1.142334973E9
-MS: 13793. Average NS for size 1431655768: 1.23330492335E10
+MS: 0.045715000000000006. Average MS for size 8: 0.08496955999999999
+MS: 0.06579900000000001. Average MS for size 1368: 0.06331426000000001
+MS: 5.87206. Average MS for size 699052: 5.39710334
+MS: 610.22334. Average MS for size 89478488: 611.64005672
+MS: 10024.767257. Average MS for size 1431655768: 10328.882785380001
 
 Python:
-Took 0.3387928009033203 to send 8 bytes. Average: 436687.4694824219
-Took 0.20003318786621094 to send 1368 bytes. Average: 365161.8957519531
-Took 6.457090377807617 to send 699052 bytes. Average: 6765532.493591309
-Took 649.6608257293701 to send 89478488 bytes. Average: 640471243.8583374
-Took 13290.663957595825 to send 1431655768 bytes. Average: 11829366302.490234
+Took 0.40912628173828125 to send 8 bytes. Average: 0.4531288146972656
+Took 0.5328655242919922 to send 1368 bytes. Average: 0.47083377838134766
+Took 6.303071975708008 to send 699052 bytes. Average: 5.791339874267578
+Took 610.5539798736572 to send 89478488 bytes. Average: 611.9399499893188
+Took 10024.658203125 to send 1431655768 bytes. Average: 10328.732571601868
+
+
+From Python to Java line by line
+================================
+
+Basic Line by Line (like Py4J)
+------------------------------
+
+Java:
+MS: 0.073234. Average MS for size 1: 0.10772904
+MS: 0.043323. Average MS for size 2: 0.06936550999999999
+MS: 0.076355. Average MS for size 4: 0.11723481
+MS: 1.233445. Average MS for size 5: 1.17028972
+MS: 1455.2592009999998. Average MS for size 7: 1384.84588638
+MS: 6021.46986. Average MS for size 8: 6756.807829660001
+
+Python:
+Average to send 1 args: 0.6382465362548828
+Average to send 2 args: 0.5421948432922363
+Average to send 4 args: 0.5433011054992676
+Average to send 5 args: 1.5936994552612305
+Average to send 7 args: 1385.167875289917
+Average to send 8 args: 6756.919558048248
+
+
+Block read then line by line
+----------------------------
+
+Java:
+MS: 0.07090099999999999. Average MS for size 1: 0.12155589000000001
+MS: 0.117881. Average MS for size 2: 0.11830245
+MS: 0.08662900000000001. Average MS for size 4: 0.15264347
+MS: 1.004901. Average MS for size 5: 1.14466489
+MS: 1916.921326. Average MS for size 7: 1582.42034454
+MS: 4503.914003999999. Average MS for size 8: 6642.23847816
+
+Python:
+Average to send 1 args: 0.5524349212646484
+Average to send 2 args: 0.49813032150268555
+Average to send 4 args: 0.5418300628662109
+Average to send 5 args: 1.5169477462768555
+Average to send 7 args: 1582.8804850578308
+Average to send 8 args: 6642.439293861389
+
+
+Block by block with size and type read read no conversion
+---------------------------------------------------------
+
+Idea #1
+Send number of args
+For each arg:
+Send arg size
+Send arg type
+Send arg
+
+Java:
+MS: 0.092854. Average MS for size 1: 0.10389952000000001
+MS: 0.09544799999999999. Average MS for size 2: 0.10331061
+MS: 0.116765. Average MS for size 4: 0.12696887
+MS: 0.44314600000000004. Average MS for size 5: 0.45264452
+MS: 48.610579. Average MS for size 7: 51.43736845
+MS: 181.736616. Average MS for size 8: 192.14064413
+
+Python:
+Average to send 1 args: 0.5434918403625488
+Average to send 2 args: 0.5395817756652832
+Average to send 4 args: 0.5295491218566895
+Average to send 5 args: 0.9208774566650391
+Average to send 7 args: 52.305846214294434
+Average to send 8 args: 192.45957851409912
+
+
+
+Protocol Testing
+================
+
+Currently, except for args 7 (long string escaping), 9 (medium byte array),
+and 10 (large byte array), Line by Line is 30% to 80% faster (statistically
+significant with t test).
+
+Sending 64 bytes is faster with base64 and line by line than straight bytes
+with length!!!
+
+Stats for args 9 and 10 are not super precise because they were produced with
+less iterations (can easily vary between 20 and 60 ms)
+
+More info: limiting the number of sendall is the key. This seems to be the
+main reason why the some versions are faster and others are slower (readline
+is not so optimized that it beats the other).
+
+Line by Line (Like Py4J with Type Conversion on both sides)
+-----------------------------------------------------------
+
+Java:
+Average MS for size 0: 0.040270969000000004
+Average MS for size 1: 0.032855958500000004
+Average MS for size 2: 0.0334010256
+Average MS for size 3: 0.0347071949
+Average MS for size 4: 0.0425927325
+Average MS for size 5: 0.0499426386
+Average MS for size 6: 0.046686444
+Average MS for size 7: 0.6224904734
+Average MS for size 8: 0.060674108899999996
+Average MS for size 9: 959.1800994600001
+Average MS for size 10: 4280.1841979499995
+
+
+Python:
+Average to send 0 args: 0.0396465539932251. Std Dev: 0.03667253314312513
+Average to send 1 args: 0.032102560997009276. Std Dev: 0.013504502196423141
+Average to send 2 args: 0.032668542861938474. Std Dev: 0.00910350172868161
+Average to send 3 args: 0.033666682243347165. Std Dev: 0.01024288027663558
+Average to send 4 args: 0.04149231910705566. Std Dev: 0.010631664465584717
+Average to send 5 args: 0.0488361120223999. Std Dev: 0.016218469573811373
+Average to send 6 args: 0.04565739631652832. Std Dev: 0.01618696610514109
+Average to send 7 args: 0.6172004461288452. Std Dev: 0.08271407452454199
+Average to send 8 args: 0.05949995517730713. Std Dev: 0.02276172039955442
+Average to send 9 args: 959.132730960846
+Average to send 10 args: 4279.974722862244
+
+Baseline (block by block with size and type read no conversion)
+---------------------------------------------------------------
+
+Java:
+Average MS for size 0: 0.027760592200000003
+Average MS for size 1: 0.0339592056
+Average MS for size 2: 0.041402592700000004
+Average MS for size 3: 0.045842110400000004
+Average MS for size 4: 0.0529090501
+Average MS for size 5: 0.0653291834
+Average MS for size 6: 0.0660094487
+Average MS for size 7: 0.3384161612
+Average MS for size 8: 0.0788174708
+Average MS for size 9: 28.65380579
+Average MS for size 10: 102.210498612
+
+Python:
+Average to send 0 args: 0.027243733406066895. Std Dev: 0.029917347368735747
+Average to send 1 args: 0.033229660987854. Std Dev: 0.011047765831787315
+Average to send 2 args: 0.040586543083190915. Std Dev: 0.012298301948498316
+Average to send 3 args: 0.04489874839782715. Std Dev: 0.010243069888505069
+Average to send 4 args: 0.05185775756835938. Std Dev: 0.01023726657073472
+Average to send 5 args: 0.06421372890472413. Std Dev: 0.016590282339464392
+Average to send 6 args: 0.06503567695617676. Std Dev: 0.009419960123027434
+Average to send 7 args: 0.33596005439758303. Std Dev: 0.05633625670494547
+Average to send 8 args: 0.07774529457092286. Std Dev: 0.01092502074516401
+Average to send 9 args: 28.64776039123535
+Average to send 10 args: 102.20155072212219
+
+Replace int, long, double by bytes. Do not send length for these
+----------------------------------------------------------------
+
+Java:
+Average MS for size 0: 0.0273554827
+Average MS for size 1: 0.0356054381
+Average MS for size 2: 0.041091375299999996
+Average MS for size 3: 0.0480625041
+Average MS for size 4: 0.058586934199999996
+Average MS for size 5: 0.0579562426
+Average MS for size 6: 0.0695812494
+Average MS for size 7: 0.33948559089999997
+Average MS for size 8: 0.0831949564
+Average MS for size 9: 26.610367949
+Average MS for size 10: 98.507667658
+
+Python:
+Average to send 0 args: 0.02686803340911865. Std Dev: 0.029120929672355352
+Average to send 1 args: 0.034848594665527345. Std Dev: 0.011592975889110268
+Average to send 2 args: 0.04031336307525635. Std Dev: 0.012244683320925532
+Average to send 3 args: 0.04702978134155274. Std Dev: 0.010441154078870455
+Average to send 4 args: 0.05721681118011475. Std Dev: 0.014222094311770857
+Average to send 5 args: 0.05692100524902344. Std Dev: 0.013816446325031038
+Average to send 6 args: 0.06837475299835205. Std Dev: 0.01614342943964623
+Average to send 7 args: 0.3371026039123535. Std Dev: 0.054368810847358416
+Average to send 8 args: 0.08197166919708251. Std Dev: 0.012648178145921275
+Average to send 9 args: 26.605305194854736
+Average to send 10 args: 98.49853897094727
+
+
+Replace type from int to byte
+-----------------------------
+
+Java:
+Average MS for size 0: 0.032895941
+Average MS for size 1: 0.047462307
+Average MS for size 2: 0.046575658
+Average MS for size 3: 0.058592910000000005
+Average MS for size 4: 0.071451218
+Average MS for size 5: 0.067559992
+Average MS for size 6: 0.078210849
+Average MS for size 7: 0.33544813
+Average MS for size 8: 0.095238775
+Average MS for size 9: 29.67949856
+Average MS for size 10: 103.665924863
+
+Python:
+Average to send 0 args: 0.03469657897949219
+Average to send 1 args: 0.0469205379486084
+Average to send 2 args: 0.04615020751953125
+Average to send 3 args: 0.05813407897949219
+Average to send 4 args: 0.0709376335144043
+Average to send 5 args: 0.06710481643676758
+Average to send 6 args: 0.07753419876098633
+Average to send 7 args: 0.3341705799102783
+Average to send 8 args: 0.09467291831970215
+Average to send 9 args: 29.674293279647827
+Average to send 10 args: 103.65503740310669
+
+
+Total length, the read all, then read from buffer
+-------------------------------------------------
+
+Java:
+Average MS for size 0: 0.0354767675
+Average MS for size 1: 0.0424002293
+Average MS for size 2: 0.048489854400000004
+Average MS for size 3: 0.0517018524
+Average MS for size 4: 0.0626191416
+Average MS for size 5: 0.064778078
+Average MS for size 6: 0.0703209147
+Average MS for size 7: 0.36916511059999996
+Average MS for size 8: 0.0867917077
+
+Python:
+Average to send 0 args: 0.035000944137573244. Std Dev: 0.03341604756506906
+Average to send 1 args: 0.0416391134262085. Std Dev: 0.01270995637102992
+Average to send 2 args: 0.04777481555938721. Std Dev: 0.011181675940562682
+Average to send 3 args: 0.050716590881347653. Std Dev: 0.009231918300330835
+Average to send 4 args: 0.061207938194274905. Std Dev: 0.014158363536393657
+Average to send 5 args: 0.06398844718933105. Std Dev: 0.015543337262327959
+Average to send 6 args: 0.06921498775482178. Std Dev: 0.012674873941458378
+Average to send 7 args: 0.36508793830871583. Std Dev: 0.054355671451097785
+Average to send 8 args: 0.0856330394744873. Std Dev: 0.014793901421817622
+
+Change buffer read strategy... maybe read all then go through backed by byte
+buffer?
+
+
+Nb of arguments, Block: Type of arguments + Length of arguments, Arguments
+--------------------------------------------------------------------------
+
+Standard IO Version
+
+Java:
+Average MS for size 0: 0.0267718862
+Average MS for size 1: 0.0349650288
+Average MS for size 2: 0.0380791169
+Average MS for size 3: 0.039474127399999996
+Average MS for size 4: 0.0444439837
+Average MS for size 5: 0.050607478
+Average MS for size 6: 0.0541648667
+Average MS for size 7: 0.3505349666
+Average MS for size 8: 0.060822223099999996
+Average MS for size 9: 46.05011576
+Average MS for size 10: 193.94806052
+
+Python:
+Average to send 0 args: 0.026387119293212892. Std Dev: 0.0291714602977437
+Average to send 1 args: 0.034255814552307126. Std Dev: 0.014944262424919802
+Average to send 2 args: 0.03737797737121582. Std Dev: 0.008676857079619918
+Average to send 3 args: 0.03851349353790283. Std Dev: 0.008261787192751462
+Average to send 4 args: 0.04343657493591309. Std Dev: 0.009857009692264235
+Average to send 5 args: 0.04968616962432861. Std Dev: 0.013860913865814744
+Average to send 6 args: 0.05319414138793945. Std Dev: 0.01250987777827827
+Average to send 7 args: 0.345538592338562. Std Dev: 0.049668324454584946
+Average to send 8 args: 0.05975730419158935. Std Dev: 0.012378797988824606
+Average to send 9 args: 46.05216979980469. Std Dev: 43.62335063077342
+Average to send 10 args: 193.9399766921997. Std Dev: 71.747892453618
+
+
+Block by block with buffer
+--------------------------
+
+Java:
+Average MS for size 0: 0.02813992162
+Average MS for size 1: 0.03276996696
+Average MS for size 2: 0.03377845716
+Average MS for size 3: 0.03494394176
+Average MS for size 4: 0.04126286434
+Average MS for size 5: 0.0438122138
+Average MS for size 6: 0.04516092477999999
+Average MS for size 7: 0.35007203095999995
+Average MS for size 8: 0.0497521529
+Average MS for size 9: 87.585793492
+Average MS for size 10: 497.875493732
+
+Python:
+Average to send 0 args: 0.027456450462341308. Std Dev: 0.018924279017775335
+Average to send 1 args: 0.031754984855651855. Std Dev: 0.009392920026952257
+Average to send 2 args: 0.03271806716918945. Std Dev: 0.009671117708291406
+Average to send 3 args: 0.03387166500091553. Std Dev: 0.00827365645674429
+Average to send 4 args: 0.040073304176330565. Std Dev: 0.010144182439498804
+Average to send 5 args: 0.042721223831176755. Std Dev: 0.009258642739993453
+Average to send 6 args: 0.0441165018081665. Std Dev: 0.010709777250725206
+Average to send 7 args: 0.34713858127593994. Std Dev: 0.061889850658804105
+Average to send 8 args: 0.048607702255249026. Std Dev: 0.010079903770505412
+Average to send 9 args: 87.58263731002808. Std Dev: 55.55256668058855
+Average to send 10 args: 497.8540234565735. Std Dev: 165.74685558942707
+
+
+Block by block with buffer (except for large values) 
+----------------------------------------------------
+
+Java:
+Average MS for size 0: 0.026808348580000002
+Average MS for size 1: 0.03159653202
+Average MS for size 2: 0.0325393331
+Average MS for size 3: 0.03885762408
+Average MS for size 4: 0.04167264394
+Average MS for size 5: 0.04334243692
+Average MS for size 6: 0.043998586299999996
+Average MS for size 7: 0.3549694543
+Average MS for size 8: 0.0514160336
+Average MS for size 9: 33.787098896
+Average MS for size 10: 100.205523292
+
+Python:
+Average to send 0 args: 0.026048831939697266. Std Dev: 0.015384850738520327
+Average to send 1 args: 0.030634679794311524. Std Dev: 0.0062402643511066495
+Average to send 2 args: 0.03152983188629151. Std Dev: 0.006247322675748988
+Average to send 3 args: 0.03772915840148926. Std Dev: 0.006078564946201638
+Average to send 4 args: 0.04042001724243164. Std Dev: 0.008129363109327737
+Average to send 5 args: 0.04231512069702149. Std Dev: 0.0072766031644166135
+Average to send 6 args: 0.042997398376464845. Std Dev: 0.008236121350466228
+Average to send 7 args: 0.34939921855926515. Std Dev: 0.056076702403519356
+Average to send 8 args: 0.050310769081115723. Std Dev: 0.00783634742138396
+Average to send 9 args: 33.78461837768555. Std Dev: 27.820593787947626
+Average to send 10 args: 100.19880247116089. Std Dev: 16.47118810416688
+
+
+
+
+NIO Revisited (ByteBuffer)
+--------------------------
+
+Maybe...

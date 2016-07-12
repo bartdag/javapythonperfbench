@@ -42,12 +42,11 @@ def transfer(size, stats, use_base64=False):
     else:
         # urandom is very slow for very large number
         to_transfer = os.urandom(1024) * (size // 1024)
-    print("{0} to {1}".format(
-        get_int(to_transfer[0:1]), get_int(to_transfer[-1:])))
+    # print("{0} to {1}".format(
+        # get_int(to_transfer[0:1]), get_int(to_transfer[-1:])))
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_address = ('127.0.0.1', 10000)
     sock.connect(server_address)
-    time.sleep(0.5)
     start = time.time()
     if use_base64:
         to_transfer = base64.b64encode(to_transfer)
@@ -60,7 +59,7 @@ def transfer(size, stats, use_base64=False):
     receive(sock)
     stop = time.time()
     timeSec = stop - start
-    stats[size].append(timeSec * 1000 * 1000 * 1000)
+    stats[size].append(timeSec * 1000)
     try:
         sock.shutdown(socket.SHUT_RDWR)
         sock.close()
@@ -73,7 +72,7 @@ def transfer(size, stats, use_base64=False):
 def main():
     base64 = True
     stats = defaultdict(list)
-    for i in range(10):
+    for i in range(50):
         transfer(SMALL, stats, base64)
         time.sleep(1)
         transfer(MEDIUM, stats, base64)
