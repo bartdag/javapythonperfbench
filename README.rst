@@ -7,8 +7,9 @@ information between Java and Python to improve the performance of
 
 Payload and type conversion are greatly inspired by Py4J's protocol.
 
-CODE OVERVIEW
-=============
+See report.txt for an overview of the performance test with pointers to the
+code.
+
 
 LICENSE
 =======
