@@ -1,7 +1,9 @@
 package com.infobart.bytesperf;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.OutputStreamWriter;
 import java.net.InetAddress;
 import java.net.Socket;
@@ -13,7 +15,7 @@ import java.util.Random;
 import static com.infobart.bytesperf.ReadProtocolApplication.*;
 
 public class WriteProtocolApplication {
-	public final static int ITERATIONS = 10;
+	public final static int ITERATIONS = 50000;
 
 	public final static String END = "e\n";
 
@@ -155,6 +157,33 @@ public class WriteProtocolApplication {
 		return lines;
 	}
 
+	public static void encodeByteTuple(Tuple[] args, Charset utf8, DataOutputStream writer) throws Exception {
+		for (int i = 0; i < args.length; i++) {
+			Tuple tuple = args[i];
+			int type = tuple.getType();
+			if (type == COMMAND_TYPE || type == STRING_TYPE) {
+				byte[] value = ((String)tuple.getValue()).getBytes(utf8);
+				writer.writeInt(type);
+				writer.writeInt(value.length);
+				writer.write(value);
+			} else if (type == INT_TYPE){
+				writer.writeInt(type);
+				writer.writeInt((int)tuple.getValue());
+			} else if (type == LONG_TYPE) {
+				writer.writeInt(type);
+				writer.writeLong((long)tuple.getValue());
+			} else if (type == DOUBLE_TYPE) {
+				writer.writeInt(type);
+				writer.writeDouble((double)tuple.getValue());
+			} else if (type == BYTE_TYPE) {
+				byte[] value = (byte[])tuple.getValue();
+				writer.writeInt(type);
+				writer.writeInt(value.length);
+				writer.write(value);
+			}
+		}
+	}
+
 
 	public static void writeLineByLine(Socket socket, int size) throws Exception {
 		Charset utf8 = Charset.forName("UTF-8");
@@ -170,7 +199,38 @@ public class WriteProtocolApplication {
 			for (String line: lines) {
 				writer.write(line);
 			}
-			// TODO Test when to flush
+			// In general, writer.flush at the end is faster than writer.flush, but that depends on the test...
+			writer.flush();
+
+			input.readByte();
+
+			long stopNano = System.nanoTime();
+			long timeNs = stopNano - startNano;
+			double timeMs = (double) timeNs / 1000.0 / 1000.0;
+
+			DoubleSummaryStatistics currentStats = stats.get(size);
+			if (currentStats == null) {
+				currentStats = new DoubleSummaryStatistics();
+				stats.put(size, currentStats);
+			}
+			currentStats.accept(timeMs);
+		}
+
+		System.out.println("Average MS for size " + size + ": " + stats.get(size).getAverage());
+
+	}
+
+	public static void writeOptimized(Socket socket, int size) throws Exception {
+		Charset utf8 = Charset.forName("UTF-8");
+		DataOutputStream writer = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
+		DataInputStream input = new DataInputStream(socket.getInputStream());
+
+		for (int i = 0; i < ITERATIONS; i++) {
+			long startNano = System.nanoTime();
+			Tuple[] args = getArgs(size);
+			writer.writeInt(args.length);
+			encodeByteTuple(args, utf8, writer);
+			// In general, writer.flush at the end is faster than writer.flush, but that depends on the test...
 			writer.flush();
 
 			input.readByte();
@@ -193,7 +253,8 @@ public class WriteProtocolApplication {
 
 	public static void processSocket(Socket socket, int size) {
 		try {
-			writeLineByLine(socket, size);
+//			writeLineByLine(socket, size);
+			writeOptimized(socket, size);
 		} catch(Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -237,5 +298,10 @@ public class WriteProtocolApplication {
 		public Object getValue() {
 			return value;
 		}
+
+		public boolean sendLength() {
+			return type == STRING_TYPE || type == BYTE_TYPE || type == COMMAND_TYPE;
+		}
 	}
+
 }

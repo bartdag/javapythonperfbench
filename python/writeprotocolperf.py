@@ -308,6 +308,44 @@ def transferWithLength(count, stats, iterations, encode_to_bytes=False,
         count, mean(stats[count]), stdev(stats[count])))
 
 
+def transferWithLengthWithBuffer(count, stats, iterations):
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_address = ('127.0.0.1', 10000)
+    sock.connect(server_address)
+    output = sock.makefile("wb")
+
+    for i in range(iterations):
+        start = time.time()
+        args = get_args(count)
+        args = encode_bytes(args)
+        output.write(struct.pack("!i", len(args)))
+        for arg in args:
+            # # Always send type first
+            arg_type = arg[1]
+            value = arg[2]
+            if arg_type in LENGTH_TYPES:
+                output.write(struct.pack("!i", arg_type))
+                output.write(struct.pack("!i", arg[0]))
+                output.write(value)
+            else:
+                output.write(struct.pack("!i", arg_type))
+                output.write(value)
+        output.flush()
+        receive(sock)
+        stop = time.time()
+        timeSec = stop - start
+        stats[count].append(timeSec * 1000)
+
+    try:
+        sock.shutdown(socket.SHUT_RDWR)
+        sock.close()
+    except Exception:
+        pass
+
+    print("Average to send {0} args: {1}. Std Dev: {2}".format(
+        count, mean(stats[count]), stdev(stats[count])))
+
+
 def transferWithLengthOptimized(count, stats, iterations):
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_address = ('127.0.0.1', 10000)
@@ -318,7 +356,10 @@ def transferWithLengthOptimized(count, stats, iterations):
         args = get_args(count)
         args = encode_bytes(args)
         sock.sendall(struct.pack("!i", len(args)))
-        MAX_SIZE = 32
+        # Tried 32 and 8192 which is platform default.
+        # Not much difference
+        # Should be MAX_SIZE = os.DEFAULT_BUFFER_SIZE
+        MAX_SIZE = 8192
         payload = bytearray()
         for arg in args:
             # # Always send type first
@@ -454,7 +495,8 @@ def main():
         BYTE_TYPE = BYTE_BYTE_TYPE
         LENGTH_TYPES = (COMMAND_TYPE, STRING_TYPE, BYTE_TYPE)
     # func = transferWithLength
-    func = transferWithLengthOptimized
+    # func = transferWithLengthOptimized
+    func = transferWithLengthWithBuffer
     # func = partial(transferWithLength, encode_to_bytes=True)
     # func = partial(transferWithLength, encode_to_bytes=True,
     # type_as_bytes=type_as_bytes)

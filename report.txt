@@ -147,8 +147,8 @@ Took 610.5539798736572 to send 89478488 bytes. Average: 611.9399499893188
 Took 10024.658203125 to send 1431655768 bytes. Average: 10328.732571601868
 
 
-Protocol Testing
-================
+Protocol Testing (Python to Java)
+================================
 
 General, measures were obtained by doing 50K iterations for size 0 to 8 and
 500 iterations for sizes 9 to 10.
@@ -356,6 +356,19 @@ Average MS for size 8: 0.0514160336
 Average MS for size 9: 33.787098896
 Average MS for size 10: 100.205523292
 
+Python: transferWithLengthOptimizedWithBuffer
+Average to send 0 args: 0.03092240810394287. Std Dev: 0.01554454795218798
+Average to send 1 args: 0.03673444747924805. Std Dev: 0.010171278805972645
+Average to send 2 args: 0.03981595039367676. Std Dev: 0.009708573175846091
+Average to send 3 args: 0.04269448757171631. Std Dev: 0.010012132403739929
+Average to send 4 args: 0.044901037216186525. Std Dev: 0.011255133195958429
+Average to send 5 args: 0.04816957473754883. Std Dev: 0.011210586573702235
+Average to send 6 args: 0.05220139503479004. Std Dev: 0.013758860836390113
+Average to send 7 args: 0.3563572406768799. Std Dev: 0.04779273416682565
+Average to send 8 args: 0.059024538993835446. Std Dev: 0.011987600260280699
+Average to send 9 args: 44.847660064697266. Std Dev: 43.81929119158259
+Average to send 10 args: 181.22079133987427. Std Dev: 72.61737351061781
+
 Python: transferWithLengthOptimized
 Average to send 0 args: 0.026048831939697266. Std Dev: 0.015384850738520327
 Average to send 1 args: 0.030634679794311524. Std Dev: 0.0062402643511066495
@@ -368,3 +381,37 @@ Average to send 7 args: 0.34939921855926515. Std Dev: 0.056076702403519356
 Average to send 8 args: 0.050310769081115723. Std Dev: 0.00783634742138396
 Average to send 9 args: 33.78461837768555. Std Dev: 27.820593787947626
 Average to send 10 args: 100.19880247116089. Std Dev: 16.47118810416688
+
+
+Protocol Testing (Java to Python)
+=================================
+
+Line by Line
+------------
+
+Average to send 0 args: 0.029696097373962404. Std Dev: 0.015616426102455708
+Average to send 1 args: 0.03384006977081299. Std Dev: 0.01789189897465875
+Average to send 2 args: 0.05787858486175537. Std Dev: 0.11956038968237774
+Average to send 3 args: 0.050096750259399414. Std Dev: 0.11409436390709386
+Average to send 4 args: 0.051258206367492676. Std Dev: 0.10824063311127527
+Average to send 5 args: 0.055262460708618164. Std Dev: 0.07655166525521769
+Average to send 6 args: 0.05728780746459961. Std Dev: 0.1172702716393522
+Average to send 7 args: 1.205134072303772. Std Dev: 0.3368171615326688
+Average to send 8 args: 0.07814785480499267. Std Dev: 0.10080019745803011
+Average to send 9 args: 1242.2444105148315. Std Dev: 254.3324868968942
+Average to send 10 args: 5171.678113937378. Std Dev: 309.8104379231317
+
+Optimized (total nb of args, type of args, optional size, arg)
+--------------------------------------------------------------
+
+Average to send 0 args: 0.02971904754638672. Std Dev: 0.01168754008301084
+Average to send 1 args: 0.03512124061584473. Std Dev: 0.02780754927787141
+Average to send 2 args: 0.03821794033050537. Std Dev: 0.08018462094130543
+Average to send 3 args: 0.04071361064910889. Std Dev: 0.07130367451494876
+Average to send 4 args: 0.0425032377243042. Std Dev: 0.06640660601478554
+Average to send 5 args: 0.04520895957946777. Std Dev: 0.048406063129166906
+Average to send 6 args: 0.04774070262908935. Std Dev: 0.088313927687362
+Average to send 7 args: 0.19410274028778077. Std Dev: 0.1493363556352882
+Average to send 8 args: 0.05544188976287842. Std Dev: 0.064623870222256
+Average to send 9 args: 26.369667053222656. Std Dev: 2.9305085596557325
+Average to send 10 args: 135.83741188049316. Std Dev: 2.8978677149683305_

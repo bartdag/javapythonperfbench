@@ -28,6 +28,7 @@ public class ReadProtocolApplication {
 	public final static int INT_TYPE = 3;
 	public final static int LONG_TYPE = 4;
 	public final static int DOUBLE_TYPE = 5;
+//	public final static int ITERATIONS = 100;
 	public final static int ITERATIONS = 50000;
 
 	public final static String SBYTE_TYPE = "0";
